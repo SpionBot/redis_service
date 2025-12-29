@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import logging,asyncio,os
-from typing import Dict
+from typing import Any, Dict
 from redis_client import get_game_clues
 from AI import generate_clue
 from redis_client import r
@@ -31,7 +31,7 @@ class user(BaseModel):
 
 HASH = os.getenv("HASH")
 @app.post("/check_connection")
-async def check_connection(data : user) -> Dict[str, Dict]:
+async def check_connection(data : user) -> Dict[str, Any]:
     if data.password != HASH:
         return {'status': False}
     return {'result': get_game_clues(data.game)}
@@ -44,3 +44,4 @@ async def check_connection() -> dict:
     except Exception as e:
         logger.error(f"❌ Redis connection failed: {e}")
         return {'status': 'error'}
+
