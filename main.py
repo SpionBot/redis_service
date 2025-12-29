@@ -5,6 +5,7 @@ import logging,asyncio,os
 from typing import Dict
 from redis_client import get_game_clues
 from AI import generate_clue
+from redis_client import r
 load_dotenv()
 logger = logging.getLogger(__name__)
 AI_KEY_1 = os.getenv("AI_KEY_1")
@@ -34,3 +35,12 @@ async def check_connection(data : user) -> Dict[str, Dict]:
     if data.password != HASH:
         return {'status': False}
     return {'status': 'ok', 'result': get_game_clues(data.game)}
+@app.get("/check_connection")
+async def check_connection() -> dict:
+    try:
+        r.ping()
+        logger.info("✅ Redis connected successfully!")
+        return {'status': 'ok'}
+    except Exception as e:
+        logger.error(f"❌ Redis connection failed: {e}")
+        return {'status': 'error'}

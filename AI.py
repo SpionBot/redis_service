@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def ask_llm(api: str, promt: str) -> dict:
-    client = genai.Client(api=api)
+    client = genai.Client(api_key=api)
 
     response = client.models.generate_content(
         model="gemini-3-pro-preview",
