@@ -4,26 +4,81 @@ import logging
 import math
 import re
 
-from google import genai
-
+import requests
 from const import PROMPTS, game_array
 from redis_client import save_game_clues
 
 logger = logging.getLogger(__name__)
 
 
-def ask_llm(api: str, promt: str) -> dict:
-    client = genai.Client(api_key=api)
+def _extract_json_object(text: str) -> dict:
+    if not text:
+        return {}
 
-    response = client.models.generate_content(
-        model="gemini-3-pro-preview",
-        contents=promt,
-    )
-    raw = response.text
-    match = re.search(r"```json\s*(\{.*?\})\s*```", raw, re.S)
-    json_str = match.group(1)
-    data = json.loads(json_str)
-    return data
+    match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.S)
+    candidates = [match.group(1)] if match else []
+
+    match = re.search(r"(\{.*\})", text, re.S)
+    if match:
+        candidates.append(match.group(1))
+
+    candidates.append(text.strip())
+
+    for candidate in candidates:
+        try:
+            parsed = json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+
+    logger.warning("LLM response did not contain a JSON object.")
+    return {}
+
+
+def ask_llm(api: str, promt: str) -> dict:
+    if not api:
+        logger.error("LLM API key is missing.")
+        return {}
+
+    headers = {
+        "Authorization": f"Bearer {api}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": "گ÷‘< ‘'گ?‘طگ?‘<گü گ?گçگ?گç‘?گّ‘'گ?‘? گٌگ?‘?گ?গ?‘<‘: گُگ?গ?‘?گَگّگْگ?گَ."},
+            {"role": "user", "content": promt},
+        ],
+        "temperature": 0.7,
+    }
+
+    try:
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=60,
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        logger.exception("LLM request failed.")
+        return {}
+
+    try:
+        body = response.json()
+    except ValueError:
+        logger.exception("LLM response was not JSON.")
+        return {}
+
+    try:
+        content = body["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError):
+        logger.warning("LLM response missing choices/content: %s", body)
+        return {}
+
+    return _extract_json_object(content)
 
 
 async def generate_clue(api: str, game: str) -> None:
