@@ -48,7 +48,7 @@ def ask_llm(api: str, promt: str) -> dict:
     payload = {
         "model": "openai/gpt-4o-mini",
         "messages": [
-            {"role": "system", "content": "گ÷‘< ‘'گ?‘طگ?‘<گü گ?گçگ?گç‘?گّ‘'گ?‘? گٌگ?‘?گ?গ?‘<‘: گُگ?গ?‘?گَگّگْگ?گَ."},
+            {"role": "system", "content": "Ты генератор подсказок для игры 'Шпион'"},
             {"role": "user", "content": promt},
         ],
         "temperature": 0.7,
@@ -59,7 +59,7 @@ def ask_llm(api: str, promt: str) -> dict:
             url="https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
             json=payload,
-            timeout=60,
+            timeout=120,
         )
         response.raise_for_status()
     except requests.RequestException:
@@ -82,7 +82,6 @@ def ask_llm(api: str, promt: str) -> dict:
 
 
 async def generate_clue(api: str, game: str) -> None:
-    await asyncio.sleep(60)
     while True:
         heroes = game_array[game]
         chunk_size = max(1, math.ceil(len(heroes) / 20))
