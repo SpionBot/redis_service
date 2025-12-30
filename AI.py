@@ -46,7 +46,7 @@ def ask_llm(api: str, promt: str) -> dict:
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "deepseek/deepseek-r1-0528:free",
+        "model": "mistralai/mistral-small-3.1-24b-instruct:free",
         "messages": [
             {"role": "system", "content": "Ты генератор подсказок для игры 'Шпион'"},
             {"role": "user", "content": promt},
@@ -93,4 +93,5 @@ async def generate_clue(api: str, game: str) -> None:
             result = ask_llm(api, prompt)
             save_game_clues(game, result)
             logger.info("Generated and saved %s clues for game %s", len(result), game)
+            asyncio.sleep(2)
         await asyncio.sleep(86400)
