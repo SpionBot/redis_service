@@ -46,7 +46,7 @@ def ask_llm(api: str, promt: str) -> dict:
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "openai/gpt-4o-mini",
+        "model": "deepseek/deepseek-r1-0528:free",
         "messages": [
             {"role": "system", "content": "Ты генератор подсказок для игры 'Шпион'"},
             {"role": "user", "content": promt},
