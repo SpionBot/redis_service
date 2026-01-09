@@ -66,11 +66,13 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
 
 async def generate_clue() -> None:
     while True:
+        print('123')
         for game in game_array:
             heroes = game_array[game]
             for hero in heroes:
                 prompt = PROMPTS[game]
                 result = ask_llm(hero,prompt)
+                print('RESULT:', result)
                 if result:
                     save_game_clues(game, result)
                     logger.info("Generated and saved %s clues for game %s",game,prompt)
