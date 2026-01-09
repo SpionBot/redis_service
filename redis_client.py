@@ -58,4 +58,3 @@ def get_game_clues(game: str) -> Dict[str, Any]:
         except json.JSONDecodeError:
             logger.warning("Failed to decode payload for hero %s in game %s", hero, game)
     return parsed
-

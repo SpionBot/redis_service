@@ -8,18 +8,13 @@ from AI import generate_clue
 from redis_client import r
 load_dotenv()
 logger = logging.getLogger(__name__)
-AI_KEY_1 = os.getenv("AI_KEY_1")
-AI_KEY_2 = os.getenv("AI_KEY_2")
 
 async def lifespan(app: FastAPI):
-    task_1 = asyncio.create_task(generate_clue(AI_KEY_1,"dota2"))
-    task_2 = asyncio.create_task(generate_clue(AI_KEY_1, "clashroyale"))
+    task_1 = asyncio.create_task(generate_clue())
     yield
     task_1.cancel()
-    task_2.cancel()
     try:
         await task_1
-        await task_2
     except asyncio.CancelledError:
         pass
 
