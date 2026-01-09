@@ -65,7 +65,6 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
 
 
 async def generate_clue() -> None:
-    await asyncio.sleep(604800)
     while True:
         print('123')
         for game in game_array:
