@@ -43,6 +43,7 @@ def _extract_json_object(text: str) -> dict:
 
 
 def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
+    logger.info(f"Asking LLM for {hero}")
     client = openai.OpenAI(
         api_key=YANDEX_CLOUD_API_KEY,
         base_url="https://rest-assistant.api.cloud.yandex.net/v1",
@@ -99,7 +100,6 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
 
 async def generate_clue() -> None:
     while True:
-        print('123')
         for game in game_array:
             heroes = game_array[game]
             for hero in heroes:
