@@ -51,18 +51,51 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
     )
     response = client.responses.create(
         model=f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}",
-        temperature=0.45,
-        instructions=promt,
         input=hero,
+        response_format= {
+            "name": "HeroHintsSchema",
+            "json_schema": {
+            "schema": {
+                "type": "object",
+                    "properties": {
+                        "hero": {
+                            "type": "object",
+                            "properties": {
+                                "hard": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 10,
+                                    "maxItems": 10
+                                },
+                                "medium": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 10,
+                                    "maxItems": 10
+                                },
+                                "easy": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 10,
+                                    "maxItems": 10
+                                }
+                            },
+                            "required": ["hard", "medium", "easy"],
+                            "additionalProperties": False
+                        }
+                    },
+                    "required": ["hero"],
+                    "additionalProperties": False
+                }
+            },
+            "strict": True
+        },
+        temperature=0.45,
     )
-    text_output = response.output_text
-    parsed_json = _extract_json_object(text_output)
-    if parsed_json:
-        return parsed_json
+    if response:
+        return response
     logger.warning("Failed to extract JSON after %s retries", retries)
     return {}
-
-
 
 async def generate_clue() -> None:
     while True:
