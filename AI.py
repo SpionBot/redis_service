@@ -46,19 +46,19 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
     client = openai.OpenAI(
         api_key=YANDEX_CLOUD_API_KEY,
         base_url="https://rest-assistant.api.cloud.yandex.net/v1",
-        project=YANDEX_CLOUD_FOLDER
+        project=YANDEX_CLOUD_FOLDER,
+        timeout=60
     )
-    for attempt in range(retries):
-        response = client.responses.create(
-            model=f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}",
-            temperature=0.4,
-            instructions=promt,
-            input=hero,
-        )
-        text_output = response.output_text
-        parsed_json = _extract_json_object(text_output)
-        if parsed_json:
-            return parsed_json
+    response = client.responses.create(
+        model=f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}",
+        temperature=0.4,
+        instructions=promt,
+        input=hero,
+    )
+    text_output = response.output_text
+    parsed_json = _extract_json_object(text_output)
+    if parsed_json:
+        return parsed_json
     logger.warning("Failed to extract JSON after %s retries", retries)
     return {}
 
