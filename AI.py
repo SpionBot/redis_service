@@ -43,7 +43,6 @@ def _extract_json_object(text: str) -> dict:
 
 
 def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
-    logger.info(f"Asking LLM for {hero}")
     client = openai.OpenAI(
         api_key=YANDEX_CLOUD_API_KEY,
         base_url="https://rest-assistant.api.cloud.yandex.net/v1",
@@ -52,54 +51,22 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
     )
     response = client.responses.create(
         model=f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}",
-        input=hero,
-        response_format= {
-            "name": "HeroHintsSchema",
-            "json_schema": {
-            "schema": {
-                "type": "object",
-                    "properties": {
-                        "hero": {
-                            "type": "object",
-                            "properties": {
-                                "hard": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                    "minItems": 10,
-                                    "maxItems": 10
-                                },
-                                "medium": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                    "minItems": 10,
-                                    "maxItems": 10
-                                },
-                                "easy": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                    "minItems": 10,
-                                    "maxItems": 10
-                                }
-                            },
-                            "required": ["hard", "medium", "easy"],
-                            "additionalProperties": False
-                        }
-                    },
-                    "required": ["hero"],
-                    "additionalProperties": False
-                }
-            },
-            "strict": True
-        },
         temperature=0.45,
+        instructions=promt,
+        input=hero,
     )
-    if response:
-        return response
+    text_output = response.output_text
+    parsed_json = _extract_json_object(text_output)
+    if parsed_json:
+        return parsed_json
     logger.warning("Failed to extract JSON after %s retries", retries)
     return {}
 
+
+
 async def generate_clue() -> None:
     while True:
+        print('123')
         for game in game_array:
             heroes = game_array[game]
             for hero in heroes:
