@@ -51,7 +51,7 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
     )
     response = client.responses.create(
         model=f"gpt://{YANDEX_CLOUD_FOLDER}/{YANDEX_CLOUD_MODEL}",
-        temperature=0.4,
+        temperature=0.45,
         instructions=promt,
         input=hero,
     )
@@ -75,8 +75,8 @@ async def generate_clue() -> None:
                 print('RESULT:', result)
                 if result:
                     save_game_clues(game, result)
-                    logger.info("Generated and saved %s clues for game %s",game,prompt)
+                    logger.info("saved clue",hero)
                 else:
-                    logger.warning("Empty result from LLM for game %s", game)
+                    logger.warning("Empty result from LLM for game %s", hero)
                 await asyncio.sleep(2)
         await asyncio.sleep(604800)
