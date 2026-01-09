@@ -29,6 +29,7 @@ HASH = os.getenv("HASH")
 async def check_connection(data : user) -> Dict[str, Any]:
     if data.password != HASH:
         return {'status': False}
+    print(get_game_clues(data.game))
     return {'result': get_game_clues(data.game)}
 @app.get("/check_connection")
 async def check_connection() -> dict:
