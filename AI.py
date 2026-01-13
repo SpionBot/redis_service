@@ -65,6 +65,7 @@ def ask_llm(hero: str, promt: str, retries: int = 5) -> dict:
 
 
 async def generate_clue() -> None:
+    print('start worka')
     while True:
         print('123')
         for game in game_array:
@@ -78,5 +79,5 @@ async def generate_clue() -> None:
                     logger.info("saved clue",hero)
                 else:
                     logger.warning("Empty result from LLM for game %s", hero)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1)
         await asyncio.sleep(604800)
