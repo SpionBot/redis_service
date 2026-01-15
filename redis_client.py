@@ -2,12 +2,8 @@ import json
 import os
 import logging
 from typing import Dict, Any
-
 import redis
 from dotenv import load_dotenv
-
-load_dotenv()
-
 logger = logging.getLogger(__name__)
 
 REDIS_URL = os.getenv("REDIS_URL")
