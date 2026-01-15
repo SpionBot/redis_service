@@ -6,7 +6,6 @@ from typing import Any, Dict
 from redis_client import get_game_clues
 from AI import generate_clue
 from redis_client import r
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 async def lifespan(app: FastAPI):

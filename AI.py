@@ -6,11 +6,7 @@ import openai
 from const import PROMPTS, game_array
 from redis_client import save_game_clues
 import os
-from dotenv import load_dotenv
-load_dotenv()
 logger = logging.getLogger(__name__)
-
-
 YANDEX_CLOUD_FOLDER = os.getenv("YANDEX_CLOUD_FOLDER")
 YANDEX_CLOUD_API_KEY = os.getenv("YANDEX_CLOUD_API_KEY")
 YANDEX_CLOUD_MODEL = os.getenv("YANDEX_CLOUD_MODEL")
